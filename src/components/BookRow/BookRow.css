@@ -1,0 +1,155 @@
+.book-row {
+  margin-bottom: 50px;
+}
+
+.row-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 0 20px;
+}
+
+.row-title-section {
+  flex: 1;
+}
+
+.row-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.row-subtitle {
+  color: #888;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.row-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.scroll-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.scroll-btn:hover {
+  opacity: 1;
+  background: rgba(229, 9, 20, 0.2);
+  border-color: rgba(229, 9, 20, 0.4);
+  transform: scale(1.1);
+}
+
+.scroll-btn:active {
+  transform: scale(0.95);
+}
+
+.books-container {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0 20px;
+}
+
+.books-container::-webkit-scrollbar {
+  display: none;
+}
+
+.books-scroll {
+  display: flex;
+  gap: 15px;
+  padding-bottom: 10px;
+  min-width: min-content;
+}
+
+.book-item {
+  flex-shrink: 0;
+  width: 200px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .row-title {
+    font-size: 1.6rem;
+  }
+  
+  .book-item {
+    width: 180px;
+  }
+  
+  .books-scroll {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .row-header {
+    padding: 0 15px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .row-controls {
+    align-self: flex-end;
+  }
+
+  .row-title {
+    font-size: 1.4rem;
+  }
+
+  .row-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .books-container {
+    padding: 0 15px;
+  }
+
+  .book-item {
+    width: 160px;
+  }
+
+  .books-scroll {
+    gap: 10px;
+  }
+
+  .scroll-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .book-item {
+    width: 140px;
+  }
+
+  .row-title {
+    font-size: 1.2rem;
+  }
+
+  .books-scroll {
+    gap: 8px;
+  }
+}

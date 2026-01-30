@@ -1,0 +1,103 @@
+.home-screen {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  gap: 20px;
+}
+
+.loading-spinner {
+  font-size: 3rem;
+  opacity: 0.8;
+}
+
+.loading-container p {
+  color: #888;
+  font-size: 1.1rem;
+}
+
+.home-content {
+  padding: 40px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 60px;
+  padding: 40px 0;
+}
+
+.action-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.action-card:hover {
+  border-color: rgba(229, 9, 20, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.action-link {
+  display: block;
+  padding: 30px;
+  text-decoration: none;
+  color: inherit;
+  text-align: center;
+}
+
+.action-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  opacity: 0.9;
+}
+
+.action-card h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.action-card p {
+  color: #888;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .home-content {
+    padding: 20px 15px;
+  }
+
+  .quick-actions {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-top: 40px;
+    padding: 20px 0;
+  }
+
+  .action-link {
+    padding: 25px 20px;
+  }
+
+  .action-icon {
+    font-size: 2.5rem;
+  }
+
+  .action-card h3 {
+    font-size: 1.2rem;
+  }
+}

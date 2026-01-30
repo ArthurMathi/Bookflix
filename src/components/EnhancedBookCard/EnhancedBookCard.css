@@ -1,0 +1,598 @@
+/* Base Enhanced Book Card Styles */
+.enhanced-book-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.book-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Poster Container */
+.book-poster-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2/3;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+}
+
+/* Background Blur Effect */
+.poster-background {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  z-index: -2;
+  transition: all 0.4s ease;
+}
+
+.bg-blur-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(20px) brightness(0.3) saturate(1.5);
+  transform: scale(1.2);
+  transition: all 0.4s ease;
+}
+
+.poster-background.hovered .bg-blur-image {
+  filter: blur(25px) brightness(0.2) saturate(2);
+  transform: scale(1.3);
+}
+
+/* Floating Particles */
+.floating-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: float 6s ease-in-out infinite;
+}
+
+.particle-1 { top: 20%; left: 10%; animation-delay: 0s; }
+.particle-2 { top: 40%; right: 15%; animation-delay: 1s; }
+.particle-3 { bottom: 30%; left: 20%; animation-delay: 2s; }
+.particle-4 { top: 60%; right: 25%; animation-delay: 3s; }
+.particle-5 { bottom: 20%; right: 10%; animation-delay: 4s; }
+.particle-6 { top: 80%; left: 30%; animation-delay: 5s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+  50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+}
+
+/* Book Cover */
+.book-cover-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.book-cover {
+  width: 85%;
+  height: 90%;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  transition: all 0.4s ease;
+  opacity: 0;
+}
+
+.book-cover.loaded {
+  opacity: 1;
+}
+
+.enhanced-book-card:hover .book-cover {
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+  transform: translateY(-5px);
+}
+
+/* Cover Placeholder & Fallback */
+.cover-placeholder,
+.cover-fallback {
+  width: 85%;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.placeholder-icon {
+  font-size: 2rem;
+  opacity: 0.5;
+  margin-bottom: 10px;
+}
+
+.fallback-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0 10px;
+  margin-bottom: 5px;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.fallback-author {
+  font-size: 0.8rem;
+  color: #ccc;
+  text-align: center;
+  padding: 0 10px;
+}
+
+/* Cinematic Glow */
+.cinematic-glow {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border-radius: 16px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+}
+
+.enhanced-book-card:hover .cinematic-glow {
+  opacity: 0.6;
+}
+
+/* Status Badge */
+.status-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 3;
+}
+
+.status-badge.planned {
+  background: rgba(59, 130, 246, 0.9);
+}
+
+.status-badge.reading {
+  background: rgba(249, 115, 22, 0.9);
+}
+
+.status-badge.completed {
+  background: rgba(34, 197, 94, 0.9);
+}
+
+/* Hover Overlay */
+.hover-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+  z-index: 4;
+}
+
+.overlay-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-to-list-btn {
+  background: linear-gradient(135deg, #e50914 0%, #b20710 100%);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.add-to-list-btn.added {
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+  cursor: not-allowed;
+}
+
+.view-details-btn {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.8rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.view-details-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Book Metadata */
+.book-metadata {
+  padding: 20px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.book-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.book-author {
+  font-size: 0.9rem;
+  color: #bbb;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.book-details {
+  overflow: hidden;
+}
+
+.book-tagline {
+  font-size: 0.85rem;
+  color: #999;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+.book-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stars {
+  color: #ffd700;
+  font-size: 0.9rem;
+}
+
+.rating-number {
+  color: #ccc;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.reading-info {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.reading-time,
+.page-count {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+/* Size Variants */
+.enhanced-book-card.small {
+  max-width: 160px;
+}
+
+.enhanced-book-card.medium {
+  max-width: 200px;
+}
+
+.enhanced-book-card.large {
+  max-width: 240px;
+}
+
+/* GENRE-SPECIFIC STYLING */
+
+/* Horror Genre */
+.enhanced-book-card.horror {
+  border-color: rgba(139, 0, 0, 0.3);
+}
+
+.enhanced-book-card.horror .floating-particles .particle {
+  background: #8b0000;
+  box-shadow: 0 0 10px #8b0000;
+}
+
+.enhanced-book-card.horror .cinematic-glow {
+  background: radial-gradient(circle, rgba(139, 0, 0, 0.4) 0%, transparent 70%);
+  filter: blur(20px);
+}
+
+.enhanced-book-card.horror .book-metadata {
+  background: linear-gradient(135deg, rgba(139, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+.enhanced-book-card.horror .book-title {
+  text-shadow: 2px 2px 4px rgba(139, 0, 0, 0.5);
+  font-family: 'Creepster', cursive;
+}
+
+/* Fiction Genre */
+.enhanced-book-card.fiction {
+  border-color: rgba(255, 215, 0, 0.2);
+}
+
+.enhanced-book-card.fiction .floating-particles .particle {
+  background: #ffd700;
+  box-shadow: 0 0 8px #ffd700;
+}
+
+.enhanced-book-card.fiction .cinematic-glow {
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+}
+
+.enhanced-book-card.fiction .book-metadata {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+/* Mystery Genre */
+.enhanced-book-card.mystery {
+  border-color: rgba(25, 25, 112, 0.4);
+}
+
+.enhanced-book-card.mystery .floating-particles .particle {
+  background: #191970;
+  box-shadow: 0 0 12px #191970;
+}
+
+.enhanced-book-card.mystery .cinematic-glow {
+  background: radial-gradient(circle, rgba(25, 25, 112, 0.4) 0%, transparent 70%);
+}
+
+.enhanced-book-card.mystery .book-metadata {
+  background: linear-gradient(135deg, rgba(25, 25, 112, 0.2) 0%, rgba(0, 0, 0, 0.9) 100%);
+}
+
+/* Romance Genre */
+.enhanced-book-card.romance {
+  border-color: rgba(255, 20, 147, 0.3);
+}
+
+.enhanced-book-card.romance .floating-particles .particle {
+  background: #ff1493;
+  box-shadow: 0 0 10px #ff1493;
+}
+
+.enhanced-book-card.romance .cinematic-glow {
+  background: radial-gradient(circle, rgba(255, 20, 147, 0.3) 0%, transparent 70%);
+}
+
+.enhanced-book-card.romance .book-metadata {
+  background: linear-gradient(135deg, rgba(255, 20, 147, 0.15) 0%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+/* Sci-Fi Genre */
+.enhanced-book-card.science-fiction {
+  border-color: rgba(0, 255, 255, 0.3);
+}
+
+.enhanced-book-card.science-fiction .floating-particles .particle {
+  background: #00ffff;
+  box-shadow: 0 0 15px #00ffff;
+  animation: glitch 3s ease-in-out infinite;
+}
+
+.enhanced-book-card.science-fiction .cinematic-glow {
+  background: radial-gradient(circle, rgba(0, 255, 255, 0.3) 0%, rgba(138, 43, 226, 0.2) 50%, transparent 70%);
+}
+
+.enhanced-book-card.science-fiction .book-metadata {
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(138, 43, 226, 0.1) 50%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+@keyframes glitch {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-2px); }
+  40% { transform: translateX(2px); }
+  60% { transform: translateX(-1px); }
+  80% { transform: translateX(1px); }
+}
+
+/* Fantasy Genre */
+.enhanced-book-card.fantasy {
+  border-color: rgba(255, 215, 0, 0.4);
+}
+
+.enhanced-book-card.fantasy .floating-particles .particle {
+  background: linear-gradient(45deg, #ffd700, #ff6347);
+  box-shadow: 0 0 12px #ffd700;
+  animation: magical-float 4s ease-in-out infinite;
+}
+
+.enhanced-book-card.fantasy .cinematic-glow {
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, rgba(255, 99, 71, 0.2) 50%, transparent 70%);
+}
+
+.enhanced-book-card.fantasy .book-metadata {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 99, 71, 0.1) 50%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+@keyframes magical-float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-15px) scale(1.2); }
+}
+
+/* Thriller Genre */
+.enhanced-book-card.thriller {
+  border-color: rgba(255, 0, 0, 0.4);
+}
+
+.enhanced-book-card.thriller .floating-particles .particle {
+  background: #ff0000;
+  box-shadow: 0 0 8px #ff0000;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.enhanced-book-card.thriller .cinematic-glow {
+  background: radial-gradient(circle, rgba(255, 0, 0, 0.4) 0%, transparent 70%);
+}
+
+.enhanced-book-card.thriller .book-metadata {
+  background: linear-gradient(135deg, rgba(255, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.9) 100%);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+/* Historical Genre */
+.enhanced-book-card.historical {
+  border-color: rgba(160, 82, 45, 0.4);
+}
+
+.enhanced-book-card.historical .floating-particles .particle {
+  background: #a0522d;
+  box-shadow: 0 0 8px #a0522d;
+}
+
+.enhanced-book-card.historical .cinematic-glow {
+  background: radial-gradient(circle, rgba(160, 82, 45, 0.3) 0%, transparent 70%);
+}
+
+.enhanced-book-card.historical .book-metadata {
+  background: linear-gradient(135deg, rgba(160, 82, 45, 0.15) 0%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+.enhanced-book-card.historical .book-title {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Adventure Genre */
+.enhanced-book-card.adventure {
+  border-color: rgba(34, 139, 34, 0.4);
+}
+
+.enhanced-book-card.adventure .floating-particles .particle {
+  background: #228b22;
+  box-shadow: 0 0 10px #228b22;
+}
+
+.enhanced-book-card.adventure .cinematic-glow {
+  background: radial-gradient(circle, rgba(34, 139, 34, 0.3) 0%, transparent 70%);
+}
+
+.enhanced-book-card.adventure .book-metadata {
+  background: linear-gradient(135deg, rgba(34, 139, 34, 0.15) 0%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+/* Comics Genre */
+.enhanced-book-card.comics {
+  border-color: rgba(255, 165, 0, 0.4);
+}
+
+.enhanced-book-card.comics .floating-particles .particle {
+  background: linear-gradient(45deg, #ff4500, #ffd700, #ff1493);
+  box-shadow: 0 0 12px #ff4500;
+  animation: pop 1.5s ease-in-out infinite;
+}
+
+.enhanced-book-card.comics .cinematic-glow {
+  background: radial-gradient(circle, rgba(255, 69, 0, 0.4) 0%, rgba(255, 215, 0, 0.2) 50%, transparent 70%);
+}
+
+.enhanced-book-card.comics .book-metadata {
+  background: linear-gradient(135deg, rgba(255, 69, 0, 0.2) 0%, rgba(255, 215, 0, 0.1) 50%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+@keyframes pop {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.4) rotate(180deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .enhanced-book-card {
+    max-width: 140px;
+  }
+
+  .book-metadata {
+    padding: 15px 12px;
+  }
+
+  .book-title {
+    font-size: 1rem;
+  }
+
+  .book-author {
+    font-size: 0.85rem;
+  }
+
+  .book-tagline {
+    font-size: 0.8rem;
+  }
+
+  .overlay-content {
+    padding: 15px;
+  }
+
+  .add-to-list-btn {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+}

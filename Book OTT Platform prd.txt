@@ -1,0 +1,135 @@
+Book OTT Platform – Simplified Product Specification 
+Product Name 
+BookFlix (Netflix x Letterboxd for Books) 
+Version 
+1.0 (MVP) 
+Product Goal 
+To revive reading culture by making books feel joyful, cinematic, and socially engaging, similar to 
+watching content on Netflix, while using Letterboxd-style reviews, diary, history, and bucket lists to 
+remove boredom from reading. 
+1. Core Technology and Architecture 
+Component 
+Web / Mobile App 
+Backend Core 
+Database 
+Activity Logs 
+Authentication 
+Technology / Detail 
+React / React Native 
+Node.js (REST / GraphQL API) 
+PostgreSQL 
+MongoDB 
+Firebase Auth / Auth0 
+Recommendation Engine ML-based filtering 
+Media Storage 
+Animations 
+AWS S3 / CDN 
+Framer Motion / Lottie 
+Purpose 
+Primary user interface (Netflix-style 
+UI) 
+Business logic, content delivery 
+User accounts, books, reviews 
+Reading diary, history, interactions 
+Secure login & account 
+management 
+Personalized book discovery 
+Book covers & images 
+Engaging cinematic UI 
+2. User Flows & Screen Specifications 
+The platform has one main user type: Reader. 
+A. Reader Screens 
+Screen Name 
+1. Splash Screen 
+2. Login Screen 
+Detail / Functionality 
+Displays app logo briefly on 
+launch 
+User authentication 
+3. Registration Screen New user onboarding 
+Key Features & Data 
+Branding, animated intro 
+Email, Password, Social Login 
+Name, Email, Password, Favorite Genres 
+Screen Name 
+Detail / Functionality 
+Key Features & Data 
+4. Home Screen 
+5. Categories Screen 
+6. Superhero Comics 
+Hub 
+Main discovery hub (Netflix 
+style) 
+Genre-wise book browsing 
+Dedicated comic section 
+7. Book Detail Screen Detailed view of a book 
+8. Review / Diary 
+Screen 
+9. Bucket List Screen 
+10. Reading History 
+Screen 
+11. Profile Screen 
+Letterboxd-inspired core 
+feature 
+Books user wants to read 
+User’s reading timeline 
+User account & stats 
+Hero banner, Trending Books, Continue Reading, 
+Mood-based rows 
+Historical, Thriller, Fictional, Sci-Fi, Romantic, 
+Adventure, Fantasy 
+Marvel, DC, Dark Horse, Manga categories 
+Cover image, synopsis, author, rating, Add to Bucket 
+List 
+Rating, review text, reading diary, mood tags 
+Planned / Reading / Completed status 
+Year-wise & genre-wise history 
+Avatar, bio, streaks, favorite genres 
+3. Review System (Letterboxd-Inspired) 
+Review Logic 
+• Users rate books (1–5 stars) 
+• Optional short or long review 
+• Mood-based tagging (Emotional, Dark, Hopeful) 
+Reading Diary 
+• Log reading dates 
+• Personal notes per session 
+• Emotional reaction 
+Reading History 
+• Timeline-based visual history 
+• Filters by year, genre, rating 
+4. Bucket List Logic 
+• Users can add books to Bucket List 
+• Drag & reorder priority 
+• Status tracking: 
+o Planned 
+o Reading 
+o Completed 
+5. Recommendation Logic 
+• Genre preference based 
+• Reading history based 
+• Community trends 
+• Similar user behavior 
+6. Engagement & Gamification 
+• Daily reading streaks 
+• Monthly reading challenges 
+• Genre completion badges 
+• Animated milestones ("You completed 5 Sci-Fi books") 
+7. UI / UX Design Principles 
+• Dark theme (Netflix-inspired) 
+• Large book cover visuals 
+• Smooth animations & micro-interactions 
+• Emotion-driven design 
+• Letterboxd-style minimal review pages 
+8. Non-Functional Requirements (NFRs) 
+• Security: Encrypted passwords, HTTPS 
+• Performance: Fast image loading via CDN 
+• Scalability: Cloud-ready architecture 
+• Accessibility: Readable fonts, contrast support 
+9. Future Enhancements 
+• Audiobooks 
+• AI-generated book trailers 
+• Reading clubs & social rooms 
+• Author live sessions 
+Final Note 
+This product treats books like cinema — visual, emotional, social — making reading a habit users enjoy 
+returning to. 
