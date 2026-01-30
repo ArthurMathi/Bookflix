@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { doc, updateDoc, onSnapshot } from 'firebase/firestore';
+import { db } from '../config/firebase';
 import { useAuth } from './AuthContext';
 
 const BookContext = createContext();
@@ -15,25 +17,50 @@ export const BookProvider = ({ children }) => {
   const { user } = useAuth();
   const [bucketList, setBucketList] = useState([]);
   const [readingHistory, setReadingHistory] = useState([]);
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState({});
   const [currentlyReading, setCurrentlyReading] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
-      // Load user's book data
-      const userBucketList = JSON.parse(localStorage.getItem(`bucketList_${user.id}`) || '[]');
-      const userHistory = JSON.parse(localStorage.getItem(`readingHistory_${user.id}`) || '[]');
-      const userReviews = JSON.parse(localStorage.getItem(`reviews_${user.id}`) || '[]');
-      const userCurrentlyReading = JSON.parse(localStorage.getItem(`currentlyReading_${user.id}`) || '[]');
+      setLoading(true);
+      
+      // Listen to user document changes in real-time
+      const userDocRef = doc(db, 'users', user.id);
+      const unsubscribe = onSnapshot(userDocRef, (doc) => {
+        if (doc.exists()) {
+          const userData = doc.data();
+          setBucketList(userData.bucketList || []);
+          setReadingHistory(userData.readingHistory || []);
+          setReviews(userData.reviews || {});
+          setCurrentlyReading(userData.currentlyReading || []);
+        }
+        setLoading(false);
+      });
 
-      setBucketList(userBucketList);
-      setReadingHistory(userHistory);
-      setReviews(userReviews);
-      setCurrentlyReading(userCurrentlyReading);
+      return () => unsubscribe();
+    } else {
+      // Clear data when user logs out
+      setBucketList([]);
+      setReadingHistory([]);
+      setReviews({});
+      setCurrentlyReading([]);
+      setLoading(false);
     }
   }, [user]);
 
-  const addToBucketList = (book, status = 'planned') => {
+  const updateUserData = async (updates) => {
+    if (!user) return;
+
+    try {
+      const userDocRef = doc(db, 'users', user.id);
+      await updateDoc(userDocRef, updates);
+    } catch (error) {
+      console.error('Error updating user data:', error);
+    }
+  };
+
+  const addToBucketList = async (book, status = 'planned') => {
     if (!user) return;
 
     const bookEntry = {
@@ -45,28 +72,42 @@ export const BookProvider = ({ children }) => {
 
     const updatedBucketList = [...bucketList, bookEntry];
     setBucketList(updatedBucketList);
-    localStorage.setItem(`bucketList_${user.id}`, JSON.stringify(updatedBucketList));
+    
+    await updateUserData({ bucketList: updatedBucketList });
   };
 
-  const updateBookStatus = (bookId, newStatus) => {
+  const updateBookStatus = async (bookId, newStatus) => {
     if (!user) return;
 
     const updatedBucketList = bucketList.map(book => 
       book.id === bookId ? { ...book, status: newStatus } : book
     );
     setBucketList(updatedBucketList);
-    localStorage.setItem(`bucketList_${user.id}`, JSON.stringify(updatedBucketList));
 
     // If completed, add to reading history
     if (newStatus === 'completed') {
       const completedBook = updatedBucketList.find(book => book.id === bookId);
       if (completedBook) {
-        addToReadingHistory(completedBook);
+        const historyEntry = {
+          ...completedBook,
+          completedDate: new Date().toISOString(),
+          year: new Date().getFullYear()
+        };
+
+        const updatedHistory = [...readingHistory, historyEntry];
+        setReadingHistory(updatedHistory);
+        
+        await updateUserData({ 
+          bucketList: updatedBucketList,
+          readingHistory: updatedHistory
+        });
       }
+    } else {
+      await updateUserData({ bucketList: updatedBucketList });
     }
   };
 
-  const addToReadingHistory = (book) => {
+  const addToReadingHistory = async (book) => {
     if (!user) return;
 
     const historyEntry = {
@@ -77,10 +118,11 @@ export const BookProvider = ({ children }) => {
 
     const updatedHistory = [...readingHistory, historyEntry];
     setReadingHistory(updatedHistory);
-    localStorage.setItem(`readingHistory_${user.id}`, JSON.stringify(updatedHistory));
+    
+    await updateUserData({ readingHistory: updatedHistory });
   };
 
-  const addReview = (bookId, reviewData) => {
+  const addReview = async (bookId, reviewData) => {
     if (!user) return;
 
     const review = {
@@ -91,16 +133,20 @@ export const BookProvider = ({ children }) => {
       createdDate: new Date().toISOString()
     };
 
-    const updatedReviews = [...reviews, review];
+    const updatedReviews = {
+      ...reviews,
+      [bookId]: review
+    };
     setReviews(updatedReviews);
-    localStorage.setItem(`reviews_${user.id}`, JSON.stringify(updatedReviews));
+    
+    await updateUserData({ reviews: updatedReviews });
 
     // Also add to reading history if not already there and status is completed
     const bookInHistory = readingHistory.find(book => book.id === bookId);
     if (!bookInHistory && reviewData.recommendation !== undefined) {
       const bookInBucket = bucketList.find(book => book.id === bookId);
       if (bookInBucket) {
-        addToReadingHistory({
+        await addToReadingHistory({
           ...bookInBucket,
           completedDate: reviewData.readingDate || new Date().toISOString()
         });
@@ -109,7 +155,7 @@ export const BookProvider = ({ children }) => {
   };
 
   const getBookReview = (bookId) => {
-    return reviews.find(review => review.bookId === bookId);
+    return reviews[bookId] || null;
   };
 
   const isInBucketList = (bookId) => {
@@ -121,18 +167,29 @@ export const BookProvider = ({ children }) => {
     return book ? book.status : null;
   };
 
+  const removeFromBucketList = async (bookId) => {
+    if (!user) return;
+
+    const updatedBucketList = bucketList.filter(book => book.id !== bookId);
+    setBucketList(updatedBucketList);
+    
+    await updateUserData({ bucketList: updatedBucketList });
+  };
+
   const value = {
     bucketList,
     readingHistory,
     reviews,
     currentlyReading,
+    loading,
     addToBucketList,
     updateBookStatus,
     addToReadingHistory,
     addReview,
     getBookReview,
     isInBucketList,
-    getBookStatus
+    getBookStatus,
+    removeFromBucketList
   };
 
   return (
