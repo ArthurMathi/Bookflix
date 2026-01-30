@@ -1,4 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged,
+  updateProfile
+} from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { auth, googleProvider, db } from '../config/firebase';
 
 const AuthContext = createContext();
 
@@ -15,86 +25,165 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing user session
-    const savedUser = localStorage.getItem('bookflix_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        // Get additional user data from Firestore
+        const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+        const userData = userDoc.exists() ? userDoc.data() : {};
+        
+        setUser({
+          id: firebaseUser.uid,
+          email: firebaseUser.email,
+          name: firebaseUser.displayName || userData.name || 'User',
+          avatar: firebaseUser.photoURL || userData.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(firebaseUser.displayName || 'User')}&background=e50914&color=fff`,
+          favoriteGenres: userData.favoriteGenres || [],
+          joinDate: userData.joinDate || firebaseUser.metadata.creationTime,
+          provider: userData.provider || 'email'
+        });
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+
+    return unsubscribe;
   }, []);
 
   const login = async (email, password) => {
     try {
-      // Simple email validation for MVP
-      const users = JSON.parse(localStorage.getItem('bookflix_users') || '[]');
-      const existingUser = users.find(u => u.email === email && u.password === password);
-      
-      if (existingUser) {
-        const userSession = {
-          id: existingUser.id,
-          email: existingUser.email,
-          name: existingUser.name,
-          favoriteGenres: existingUser.favoriteGenres,
-          avatar: existingUser.avatar,
-          joinDate: existingUser.joinDate
-        };
-        
-        setUser(userSession);
-        localStorage.setItem('bookflix_user', JSON.stringify(userSession));
-        return { success: true };
-      } else {
-        return { success: false, error: 'Invalid email or password' };
-      }
+      await signInWithEmailAndPassword(auth, email, password);
+      return { success: true };
     } catch (error) {
-      return { success: false, error: 'Login failed' };
+      let errorMessage = 'Login failed';
+      
+      switch (error.code) {
+        case 'auth/user-not-found':
+          errorMessage = 'No account found with this email';
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Incorrect password';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Invalid email address';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many failed attempts. Please try again later';
+          break;
+        default:
+          errorMessage = error.message;
+      }
+      
+      return { success: false, error: errorMessage };
     }
   };
 
   const register = async (userData) => {
     try {
-      const users = JSON.parse(localStorage.getItem('bookflix_users') || '[]');
+      // Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(
+        auth, 
+        userData.email, 
+        userData.password
+      );
       
-      // Check if user already exists
-      if (users.find(u => u.email === userData.email)) {
-        return { success: false, error: 'User already exists' };
-      }
+      const firebaseUser = userCredential.user;
+      
+      // Update the user's display name
+      await updateProfile(firebaseUser, {
+        displayName: userData.name
+      });
 
-      const newUser = {
-        id: Date.now().toString(),
-        ...userData,
+      // Save additional user data to Firestore
+      await setDoc(doc(db, 'users', firebaseUser.uid), {
+        name: userData.name,
+        email: userData.email,
+        favoriteGenres: userData.favoriteGenres,
         joinDate: new Date().toISOString(),
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=e50914&color=fff`
-      };
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=e50914&color=fff`,
+        provider: 'email',
+        bucketList: [],
+        readingHistory: [],
+        reviews: {}
+      });
 
-      users.push(newUser);
-      localStorage.setItem('bookflix_users', JSON.stringify(users));
-
-      const userSession = {
-        id: newUser.id,
-        email: newUser.email,
-        name: newUser.name,
-        favoriteGenres: newUser.favoriteGenres,
-        avatar: newUser.avatar,
-        joinDate: newUser.joinDate
-      };
-
-      setUser(userSession);
-      localStorage.setItem('bookflix_user', JSON.stringify(userSession));
       return { success: true };
     } catch (error) {
-      return { success: false, error: 'Registration failed' };
+      let errorMessage = 'Registration failed';
+      
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          errorMessage = 'An account with this email already exists';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Invalid email address';
+          break;
+        case 'auth/weak-password':
+          errorMessage = 'Password should be at least 6 characters';
+          break;
+        default:
+          errorMessage = error.message;
+      }
+      
+      return { success: false, error: errorMessage };
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('bookflix_user');
+  const signInWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const firebaseUser = result.user;
+      
+      // Check if this is a new user
+      const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+      
+      if (!userDoc.exists()) {
+        // Save new Google user data to Firestore
+        await setDoc(doc(db, 'users', firebaseUser.uid), {
+          name: firebaseUser.displayName,
+          email: firebaseUser.email,
+          favoriteGenres: [], // Will be set later in onboarding
+          joinDate: new Date().toISOString(),
+          avatar: firebaseUser.photoURL,
+          provider: 'google',
+          bucketList: [],
+          readingHistory: [],
+          reviews: {}
+        });
+      }
+      
+      return { success: true };
+    } catch (error) {
+      let errorMessage = 'Google sign-in failed';
+      
+      switch (error.code) {
+        case 'auth/popup-closed-by-user':
+          errorMessage = 'Sign-in cancelled';
+          break;
+        case 'auth/popup-blocked':
+          errorMessage = 'Popup blocked. Please allow popups and try again';
+          break;
+        default:
+          errorMessage = error.message;
+      }
+      
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: 'Logout failed' };
+    }
   };
 
   const value = {
     user,
     login,
     register,
+    signInWithGoogle,
     logout,
     loading
   };
