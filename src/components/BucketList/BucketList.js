@@ -16,8 +16,9 @@ const BucketList = () => {
   const getRecentActivity = () => {
     const activities = [];
     
-    // Add recent reviews
-    reviews.slice(-10).forEach(review => {
+    // Add recent reviews (convert reviews object to array)
+    const reviewsArray = Object.values(reviews);
+    reviewsArray.slice(-10).forEach(review => {
       const book = [...bucketList, ...readingHistory].find(b => b.id === review.bookId);
       if (book) {
         activities.push({
@@ -56,20 +57,20 @@ const BucketList = () => {
 
   const getReadingStats = () => {
     const currentYear = new Date().getFullYear();
-    const thisYearBooks = readingHistory.filter(book => 
+    const thisYearBooks = readingHistory?.filter(book => 
       new Date(book.completedDate).getFullYear() === currentYear
-    ).length;
+    ).length || 0;
     
-    const totalBooks = readingHistory.length;
-    const currentlyReading = bucketList.filter(book => book.status === 'reading').length;
-    const wantToRead = bucketList.filter(book => book.status === 'planned').length;
+    const totalBooks = readingHistory?.length || 0;
+    const currentlyReading = bucketList?.filter(book => book.status === 'reading').length || 0;
+    const wantToRead = bucketList?.filter(book => book.status === 'planned').length || 0;
     
     return { thisYearBooks, totalBooks, currentlyReading, wantToRead };
   };
 
   const getYearlyStats = () => {
     const years = {};
-    readingHistory.forEach(book => {
+    readingHistory?.forEach(book => {
       const year = new Date(book.completedDate).getFullYear();
       years[year] = (years[year] || 0) + 1;
     });
@@ -177,6 +178,9 @@ const BucketList = () => {
                           src={activity.book.imageLinks?.thumbnail || '/placeholder-book.jpg'}
                           alt={activity.book.title}
                           className="activity-book-cover"
+                          onError={(e) => {
+                            e.target.src = '/placeholder-book.jpg';
+                          }}
                         />
                       </div>
                       
@@ -269,31 +273,31 @@ const BucketList = () => {
 
             <div className="reading-lists">
               <div className="list-category">
-                <h3>Currently Reading ({bucketList.filter(b => b.status === 'reading').length})</h3>
+                <h3>Currently Reading ({bucketList?.filter(b => b.status === 'reading').length || 0})</h3>
                 <div className="books-grid">
-                  {bucketList.filter(book => book.status === 'reading').map(book => (
+                  {bucketList?.filter(book => book.status === 'reading').map(book => (
                     <BookCard key={book.id} book={book} showProgress={true} size="small" />
-                  ))}
+                  )) || []}
                 </div>
               </div>
 
               <div className="list-category">
-                <h3>Want to Read ({bucketList.filter(b => b.status === 'planned').length})</h3>
+                <h3>Want to Read ({bucketList?.filter(b => b.status === 'planned').length || 0})</h3>
                 <div className="books-grid">
-                  {bucketList.filter(book => book.status === 'planned').map(book => (
+                  {bucketList?.filter(book => book.status === 'planned').map(book => (
                     <BookCard key={book.id} book={book} size="small" />
-                  ))}
+                  )) || []}
                 </div>
               </div>
 
               <div className="list-category">
-                <h3>Completed ({readingHistory.length})</h3>
+                <h3>Completed ({readingHistory?.length || 0})</h3>
                 <div className="books-grid">
-                  {readingHistory.slice(0, 12).map(book => (
+                  {readingHistory?.slice(0, 12).map(book => (
                     <BookCard key={`${book.id}-${book.completedDate}`} book={book} size="small" />
-                  ))}
+                  )) || []}
                 </div>
-                {readingHistory.length > 12 && (
+                {(readingHistory?.length || 0) > 12 && (
                   <Link to="/history" className="view-all-link">
                     View all completed books →
                   </Link>
@@ -336,7 +340,7 @@ const BucketList = () => {
               
               <div className="stat-card">
                 <div className="stat-icon">⭐</div>
-                <div className="stat-value">{reviews.length}</div>
+                <div className="stat-value">{Object.keys(reviews).length}</div>
                 <div className="stat-label">Reviews Written</div>
               </div>
             </div>
@@ -376,8 +380,8 @@ const BucketList = () => {
             </div>
 
             <div className="reviews-list">
-              {reviews.length > 0 ? (
-                reviews.slice().reverse().map((review, index) => {
+              {Object.keys(reviews).length > 0 ? (
+                Object.values(reviews).slice().reverse().map((review, index) => {
                   const book = [...bucketList, ...readingHistory].find(b => b.id === review.bookId);
                   if (!book) return null;
 
@@ -394,6 +398,9 @@ const BucketList = () => {
                           src={book.imageLinks?.thumbnail || '/placeholder-book.jpg'}
                           alt={book.title}
                           className="review-book-cover"
+                          onError={(e) => {
+                            e.target.src = '/placeholder-book.jpg';
+                          }}
                         />
                         <div className="review-book-details">
                           <Link to={`/book/${book.id}`} className="review-book-title">
