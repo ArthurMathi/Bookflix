@@ -20,7 +20,7 @@ const BookDetail = () => {
 
   useEffect(() => {
     loadBookDetails();
-  }, [id]);
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadBookDetails = async () => {
     try {

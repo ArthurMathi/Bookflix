@@ -8,7 +8,7 @@ import './BucketList.css';
 
 const BucketList = () => {
   const { user } = useAuth();
-  const { bucketList, readingHistory, reviews, updateBookStatus } = useBooks();
+  const { bucketList, readingHistory, reviews } = useBooks();
   const [activeTab, setActiveTab] = useState('diary');
   const [selectedYear, setSelectedYear] = useState('all');
 
@@ -87,13 +87,6 @@ const BucketList = () => {
   const recentActivity = getRecentActivity();
   const yearlyStats = getYearlyStats();
   const years = Object.keys(yearlyStats).sort((a, b) => b - a);
-
-  const filteredBooks = selectedYear === 'all' 
-    ? bucketList 
-    : bucketList.filter(book => {
-        const bookYear = new Date(book.addedDate).getFullYear();
-        return bookYear === parseInt(selectedYear);
-      });
 
   return (
     <motion.div 

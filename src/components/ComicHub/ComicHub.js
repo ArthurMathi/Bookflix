@@ -20,7 +20,7 @@ const ComicHub = () => {
 
   useEffect(() => {
     loadComicData();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadComicData = async () => {
     try {

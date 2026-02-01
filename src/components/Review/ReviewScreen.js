@@ -35,7 +35,7 @@ const ReviewScreen = () => {
 
   useEffect(() => {
     loadBookAndReview();
-  }, [id]); // Only depend on id since other dependencies are stable
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadBookAndReview = async () => {
     try {
